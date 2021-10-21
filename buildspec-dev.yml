@@ -27,7 +27,8 @@ phases:
     on-failure: ABORT   
     commands:
     # Project-1: AWS VPC, ASG, ALB, Route53, ACM, Security Groups and SNS 
-      - cd "$CODEBUILD_SRC_DIR/iac-codepipeline"
+      - cd "$CODEBUILD_SRC_DIR"
+      - ls -lthr
       - ls -lrt "$CODEBUILD_SRC_DIR/iac-codepipeline"
       - terraform --version
       - terraform init -input=false --backend-config=environments/dev/env.backendconfig
