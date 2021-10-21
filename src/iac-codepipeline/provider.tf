@@ -1,6 +1,6 @@
 provider "aws" {
-  region  = var.region
-  profile = "default"
+  region  = "us-west-2"
+  # profile = "default"
 }
 
 terraform {
@@ -8,6 +8,6 @@ terraform {
     bucket  = "iac-pipeline-test-2021"
     key     = "devIacPipeline.tfstate"
     region  = "us-west-2"
-    profile = "default"
+    # profile = "default"
   }
 }
