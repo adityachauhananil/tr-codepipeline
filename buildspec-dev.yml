@@ -33,10 +33,10 @@ phases:
       - export AWS_SECRET_ACCESS_KEY=`curl --silent 169.254.170.2:80$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI | jq -r '.SecretAccessKey'`
       - export AWS_SESSION_TOKEN=`curl --silent 169.254.170.2:80$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI | jq -r '.Token'`
       - terraform --version
-      - terraform init 
+      - terraform init -input=false -backend-config=environments/dev/env.backendconfig
       - terraform validate
-      - terraform plan -lock=false -input=false -var-file=dev.tfvars           
-      - terraform $TF_COMMAND -input=false -var-file=dev.tfvars -auto-approve  
+      - terraform plan -lock=false -input=false -var-file=environments/dev/dev.tfvars           
+      - terraform $TF_COMMAND -input=false -var-file=environments/dev/dev.tfvars -auto-approve  
   post_build:
     on-failure: CONTINUE   
     commands:
