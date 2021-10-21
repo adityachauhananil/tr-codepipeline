@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    TERRAFORM_VERSION: "0.15.3"
+    TERRAFORM_VERSION: "1.0.9"
     TF_COMMAND: "apply"
     #TF_COMMAND: "destroy"
   parameter-store:
@@ -29,6 +29,9 @@ phases:
     # Project-1: AWS VPC, ASG, ALB, Route53, ACM, Security Groups and SNS 
       - cd "$CODEBUILD_SRC_DIR/src/iac-codepipeline"
       - ls -lrt "$CODEBUILD_SRC_DIR/src/iac-codepipeline"
+      - export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+      - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+      - echo "$AWS_SECRET_ACCESS_KEY"
       - terraform --version
       - terraform init -input=false --backend-config=environments/dev/env.backendconfig
       - terraform validate
