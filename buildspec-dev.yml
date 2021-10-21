@@ -33,7 +33,7 @@ phases:
       - export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
       - echo "$AWS_SECRET_ACCESS_KEY"
       - terraform --version
-      - terraform init -input=false --backend-config=environments/dev/env.backendconfig
+      - terraform init -input=false -var="AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" -var="AWS_ACCESS_KEY_ID=$AWS_SECRET_ACCESS_KEY"
       - terraform validate
       - terraform plan -lock=false -input=false -var-file=dev.tfvars           
       - terraform $TF_COMMAND -input=false -var-file=dev.tfvars -auto-approve  
