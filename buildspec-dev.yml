@@ -29,7 +29,9 @@ phases:
     # Project-1: AWS VPC, ASG, ALB, Route53, ACM, Security Groups and SNS 
       - cd "$CODEBUILD_SRC_DIR/src/iac-codepipeline"
       - ls -lrt "$CODEBUILD_SRC_DIR/src/iac-codepipeline"
-      - curl 169.254.170.2$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI
+      - export AWS_ACCESS_KEY_ID=`curl --silent 169.254.170.2:80$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI | jq -r '.AccessKeyId'`
+      - export AWS_SECRET_ACCESS_KEY=`curl --silent 169.254.170.2:80$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI | jq -r '.SecretAccessKey'`
+      - export AWS_SESSION_TOKEN=`curl --silent 169.254.170.2:80$AWS_CONTAINER_CREDENTIALS_RELATIVE_URI | jq -r '.Token'`
       - terraform --version
       - terraform init 
       - terraform validate
