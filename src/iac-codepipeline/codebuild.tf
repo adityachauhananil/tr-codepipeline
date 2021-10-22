@@ -67,6 +67,33 @@ resource "aws_iam_role_policy" "code_build_policy" {
       ]
     },
     {
+      "Effect": "Allow",
+      "Action": [
+        "iam:*"
+      ],
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "codebuild:*"
+      ],
+      "Resource": [
+        "*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "codepipeline:*"
+      ],
+      "Resource": [
+        "*"
+      ]
+    },
+    {
             "Action": [
                 "kms:Decrypt",
                 "kms:DescribeKey",

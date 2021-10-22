@@ -95,10 +95,10 @@ resource "aws_codepipeline" "codepipeline" {
   }
 
   stage {
-    name = "dev_tf_plan"
+    name = "dev_plan"
 
     action {
-      name             = "dev_tf_plan"
+      name             = "Build"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
@@ -135,10 +135,10 @@ resource "aws_codepipeline" "codepipeline" {
   }
 
   stage {
-    name = "dev_tf_apply"
+    name = "dev_apply"
 
     action {
-      name             = "dev_tf_apply"
+      name             = "Build"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
