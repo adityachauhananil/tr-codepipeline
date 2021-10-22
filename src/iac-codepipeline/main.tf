@@ -6,6 +6,7 @@ locals {
   github_owner  = var.github_owner
   github_repo   = var.github_repo
   github_branch = var.github_branch
+  codestar_connection = var.codestar_connection
 }
 
 # Data terraform state blocks.
@@ -46,10 +47,10 @@ resource "aws_s3_bucket" "codepipeline_bucket" {
   acl    = "private"
 }
 
-##github connection
-resource "aws_codestarconnections_connection" "iac_pipeline" {
-  name          = "iac-pipeline-connection"
-}
+# ##github connection
+# resource "aws_codestarconnections_connection" "iac_pipeline" {
+#   name          = "iac-pipeline-connection"
+# }
 
 
 # Resource Codepipeline.
@@ -86,7 +87,7 @@ resource "aws_codepipeline" "codepipeline" {
       #   Branch     = "${local.github_branch}"
       # }
       configuration = {
-        ConnectionArn    = aws_codestarconnections_connection.iac_pipeline.arn
+        ConnectionArn    = "${local.codestar_connection}"
         FullRepositoryId = "adityachauhananil/tr-codepipeline"
         BranchName       = "dev"
       }      
@@ -257,7 +258,7 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
       "Action": [
         "codestar-connections:*"
       ],
-      "Resource": "${aws_codestarconnections_connection.iac_pipeline.arn}"
+      "Resource": "${local.codestar_connection}"
     },
     {
         "Action": [

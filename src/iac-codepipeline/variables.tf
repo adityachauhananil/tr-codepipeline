@@ -3,6 +3,9 @@ variable "approve_comment" {
   default = "Approve"
 }
 
+variable "codestar_connection" {
+  description = "codestar_connection arn"
+}
 variable "github_branch" {
   description = "Github branch for your application"
 }
