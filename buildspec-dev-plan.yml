@@ -5,9 +5,9 @@ env:
     TERRAFORM_VERSION: "1.0.9"
     TF_COMMAND: "apply"
     #TF_COMMAND: "destroy"
-  parameter-store:
-    AWS_ACCESS_KEY_ID: "/CodeBuild/MY_AWS_ACCESS_KEY_ID"
-    AWS_SECRET_ACCESS_KEY: "/CodeBuild/MY_AWS_SECRET_ACCESS_KEY"
+  # parameter-store:
+  #   AWS_ACCESS_KEY_ID: "/CodeBuild/MY_AWS_ACCESS_KEY_ID"
+  #   AWS_SECRET_ACCESS_KEY: "/CodeBuild/MY_AWS_SECRET_ACCESS_KEY"
 
 phases:
   install:
@@ -36,7 +36,6 @@ phases:
       - terraform init -input=false -backend-config=environments/dev/env.backendconfig
       - terraform validate
       - terraform plan -lock=false -input=false -var-file=environments/dev/dev.tfvars           
-      - terraform $TF_COMMAND -input=true -var-file=environments/dev/dev.tfvars 
   post_build:
     on-failure: CONTINUE   
     commands:

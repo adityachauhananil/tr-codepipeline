@@ -1,3 +1,8 @@
+variable "approve_comment" {
+  description = "Approval gate"
+  default = "Approve"
+}
+
 variable "github_branch" {
   description = "Github branch for your application"
 }
@@ -10,7 +15,11 @@ variable "github_repo" {
   description = "Repo name"
 }
 
-variable "codebuild_project" {
+variable "codebuild_project_plan" {
+  description = "Project Name"
+}
+
+variable "codebuild_project_apply" {
   description = "Project Name"
 }
 variable "github_token" {

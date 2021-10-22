@@ -24,4 +24,5 @@ github_repo   = "tr-codepipeline"
 github_branch = "dev"
 
 codepipeline_name = "iac-Codepipeline"
-codebuild_project = "iac-codebuild"
+codebuild_project_plan = "iac-codebuild-plan"
+codebuild_project_apply = "iac-codebuild-apply"

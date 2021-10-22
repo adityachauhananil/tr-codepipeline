@@ -141,8 +141,8 @@ POLICY
 }
 
 # Resource for Codebuild.
-resource "aws_codebuild_project" "code_build" {
-  name          = var.codebuild_project
+resource "aws_codebuild_project" "code_build_plan" {
+  name          = var.codebuild_project_plan
   description   = "codebuild_project"
   build_timeout = "5"
   service_role  = aws_iam_role.code_build_role.arn
@@ -189,7 +189,65 @@ resource "aws_codebuild_project" "code_build" {
   source {
     type            = "CODEPIPELINE"
     git_clone_depth = 0
-    buildspec       = "buildspec-dev.yml"
+    buildspec       = "buildspec-dev-plan.yml"
+  }
+  source_version = var.github_branch
+
+  tags = {
+    Environment = var.tr_environment_type
+    Owner       = var.tr_resource_owner
+  }
+}
+
+resource "aws_codebuild_project" "code_build_apply" {
+  name          = var.codebuild_project_apply
+  description   = "codebuild_project"
+  build_timeout = "5"
+  service_role  = aws_iam_role.code_build_role.arn
+
+  artifacts {
+    type = "CODEPIPELINE"
+  }
+
+  # cache {
+  #   type     = "S3"
+  #   location = data.terraform_remote_state.s3.outputs.s3_bucket_id
+  # }
+
+  environment {
+    compute_type                = "BUILD_GENERAL1_SMALL"
+    image                       = "aws/codebuild/standard:4.0" # "aws/codebuild/amazonlinux2-x86_64-standard:3.0"
+    type                        = "LINUX_CONTAINER"
+    image_pull_credentials_type = "CODEBUILD"
+    privileged_mode             = true
+
+    environment_variable {
+      name  = "AWS_DEFAULT_REGION"
+      value = var.region
+    }
+
+    # environment_variable {
+    #   name  = "REPOSITORY_URI"
+    #   value = data.terraform_remote_state.s3.outputs.aws_web_url
+    # }
+  }
+
+  logs_config {
+    cloudwatch_logs {
+      group_name  = "log-group"
+      stream_name = "log-stream"
+    }
+
+    # s3_logs {
+    #   status   = "ENABLED"
+    #   location = "${data.terraform_remote_state.s3.outputs.s3_bucket_id}/build-log"
+    # }
+  }
+
+  source {
+    type            = "CODEPIPELINE"
+    git_clone_depth = 0
+    buildspec       = "buildspec-dev-apply.yml"
   }
   source_version = var.github_branch
 

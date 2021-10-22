@@ -46,6 +46,12 @@ resource "aws_s3_bucket" "codepipeline_bucket" {
   acl    = "private"
 }
 
+##github connection
+resource "aws_codestarconnections_connection" "iac_pipeline" {
+  name          = "iac-pipeline-connection"
+}
+
+
 # Resource Codepipeline.
 resource "aws_codepipeline" "codepipeline" {
   name     = var.codepipeline_name
@@ -67,25 +73,31 @@ resource "aws_codepipeline" "codepipeline" {
     action {
       name             = "Source"
       category         = "Source"
-      owner            = "ThirdParty"
-      provider         = "GitHub"
+      owner            = "AWS"
+      # provider         = "GitHub"
+      provider         = "CodeStarSourceConnection" 
       version          = "1"
       output_artifacts = ["source_output"]
 
+      # configuration = {
+      #   OAuthToken = "${local.github_token}"
+      #   Owner      = "${local.github_owner}"
+      #   Repo       = "${local.github_repo}"
+      #   Branch     = "${local.github_branch}"
+      # }
       configuration = {
-        OAuthToken = "${local.github_token}"
-        Owner      = "${local.github_owner}"
-        Repo       = "${local.github_repo}"
-        Branch     = "${local.github_branch}"
-      }
+        ConnectionArn    = aws_codestarconnections_connection.iac_pipeline.arn
+        FullRepositoryId = "adityachauhananil/tr-codepipeline"
+        BranchName       = "dev"
+      }      
     }
   }
 
   stage {
-    name = "dev"
+    name = "dev_tf_plan"
 
     action {
-      name             = "Build"
+      name             = "dev_tf_plan"
       category         = "Build"
       owner            = "AWS"
       provider         = "CodeBuild"
@@ -94,7 +106,46 @@ resource "aws_codepipeline" "codepipeline" {
       version          = "1"
 
       configuration = {
-        ProjectName = aws_codebuild_project.code_build.name
+        ProjectName = aws_codebuild_project.code_build_plan.name
+      }
+    }
+  }
+
+  stage {
+    name = "dev_approval"
+
+    action {
+      name             = "Approval"
+      category         = "Approval"
+      owner            = "AWS"
+      provider         = "Manual"
+      version          = "1"
+
+      # configuration = {
+      #   ProjectName = aws_codebuild_project.code_build_apply.name
+      # }
+
+      configuration = {
+        # NotificationArn = "${var.approve_sns_arn}"
+        CustomData = "${var.approve_comment}"
+        # ExternalEntityLink = "${var.approve_url}"
+      }
+    }
+  }
+
+  stage {
+    name = "dev_tf_apply"
+
+    action {
+      name             = "dev_tf_apply"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      input_artifacts  = ["build_output"]
+      version          = "1"
+
+      configuration = {
+        ProjectName = aws_codebuild_project.code_build_apply.name
       }
     }
   }
@@ -202,23 +253,23 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
     "Effect": "Allow"
     },
     {
-    "Action": [
-        "codestar-connections:UseConnection"
-    ],
-    "Resource": "*",
-    "Effect": "Allow"
+      "Effect": "Allow",
+      "Action": [
+        "codestar-connections:*"
+      ],
+      "Resource": "${aws_codestarconnections_connection.iac_pipeline.arn}"
     },
-        {
-            "Action": [
-                "kms:Decrypt",
-                "kms:DescribeKey",
-                "kms:Encrypt",
-                "kms:ReEncrypt*",
-                "kms:GenerateDataKey*"
-            ],
-            "Resource": "*",
-            "Effect": "Allow"
-        },
+    {
+        "Action": [
+            "kms:Decrypt",
+            "kms:DescribeKey",
+            "kms:Encrypt",
+            "kms:ReEncrypt*",
+            "kms:GenerateDataKey*"
+        ],
+        "Resource": "*",
+        "Effect": "Allow"
+    },
     {
       "Action": "sts:*",
       "Resource": "*",
