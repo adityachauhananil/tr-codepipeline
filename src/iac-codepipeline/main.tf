@@ -95,7 +95,7 @@ resource "aws_codepipeline" "codepipeline" {
   }
 
   stage {
-    name = "dev_plan"
+    name = "dev"
 
     action {
       name             = "Build"
@@ -107,13 +107,13 @@ resource "aws_codepipeline" "codepipeline" {
       version          = "1"
 
       configuration = {
-        ProjectName = aws_codebuild_project.code_build_plan.name
+        ProjectName = aws_codebuild_project.code_build.name
       }
     }
   }
 
   stage {
-    name = "dev_approval"
+    name = "Approval"
 
     action {
       name             = "Approval"
@@ -135,7 +135,7 @@ resource "aws_codepipeline" "codepipeline" {
   }
 
   stage {
-    name = "dev_apply"
+    name = "staging"
 
     action {
       name             = "Build"
@@ -143,13 +143,15 @@ resource "aws_codepipeline" "codepipeline" {
       owner            = "AWS"
       provider         = "CodeBuild"
       input_artifacts  = ["build_output"]
+      output_artifacts = ["staging_output"]
       version          = "1"
 
       configuration = {
-        ProjectName = aws_codebuild_project.code_build_apply.name
+        ProjectName = aws_codebuild_project.code_build.name
       }
     }
   }
+
   # stage {
   #   name = "Deploy"
 

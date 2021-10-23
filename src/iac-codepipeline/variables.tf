@@ -18,13 +18,10 @@ variable "github_repo" {
   description = "Repo name"
 }
 
-variable "codebuild_project_plan" {
+variable "codebuild_project" {
   description = "Project Name"
 }
 
-variable "codebuild_project_apply" {
-  description = "Project Name"
-}
 variable "github_token" {
   description = "github token for connection"
 }
