@@ -35,8 +35,8 @@ phases:
       - terraform --version
       - terraform init -input=false -backend-config=environments/dev/env.backendconfig
       - terraform validate
-      - terraform plan -lock=false -input=false -var-file=environments/dev/dev.tfvars 
-      - terraform ${TF_COMMAND} -input=false -var-file=environments/dev/dev.tfvars -auto-approve           
+#       - terraform plan -lock=false -input=false -var-file=environments/dev/dev.tfvars 
+#       - terraform ${TF_COMMAND} -input=false -var-file=environments/dev/dev.tfvars -auto-approve           
   post_build:
     on-failure: CONTINUE   
     commands:
